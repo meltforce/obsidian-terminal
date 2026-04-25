@@ -76,17 +76,28 @@ export class ActiveFileTracker {
       void this.#cleanup();
     });
 
-    this.#refreshCurrentFile();
+    // Workspace state isn't reliable until layout-ready, so defer the
+    // initial refresh. #reconfigure() also re-runs after this fires so
+    // the tracker file picks up the real active note as soon as it's
+    // available.
+    workspace.onLayoutReady(() => {
+      this.#refreshCurrentFile();
+      this.#reconfigure();
+    });
     this.#reconfigure();
   }
 
+  // Pulls the active file from the workspace. Intentionally does not
+  // clear #currentFilePath when getActiveFile() returns null: when the
+  // user moves focus into a terminal leaf, settings dialog, or empty
+  // pane the active file is null but the "note the user is currently
+  // working on" hasn't really changed.
   #refreshCurrentFile(): void {
     const {
       app: { workspace, vault },
     } = this.plugin;
     const active = workspace.getActiveFile();
     if (!active || !(vault.adapter instanceof FileSystemAdapter)) {
-      this.#currentFilePath = null;
       return;
     }
     this.#currentFilePath = vault.adapter.getFullPath(active.path);
