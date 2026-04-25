@@ -781,6 +781,7 @@ class WindowsPseudoterminal implements Pseudoterminal {
       {
         language: { value: i18n },
         settings,
+        activeFileTracker,
       } = context,
       resizerInitial = (async (): Promise<PipedChildProcess | null> => {
         if (isNil(pythonExecutable)) {
@@ -830,11 +831,13 @@ class WindowsPseudoterminal implements Pseudoterminal {
       > => {
         const resizer = await resizerInitial.catch(() => null);
         try {
-          const [childProcess2, fsPromises2, tmpPromise2] = await Promise.all([
-              childProcess,
-              fsPromises,
-              tmpPromise,
-            ]),
+          const [childProcess2, fsPromises2, process2, tmpPromise2] =
+              await Promise.all([
+                childProcess,
+                fsPromises,
+                process,
+                tmpPromise,
+              ]),
             inOutTmp = await tmpPromise2.file({
               discardDescriptor: true,
               postfix: ".bat",
@@ -869,14 +872,24 @@ class WindowsPseudoterminal implements Pseudoterminal {
                   ? [WINDOWS_CONHOST_PATH, inOutTmp.path]
                   : [inOutTmp.path],
               ),
-              ret = await spawnPromise(() =>
-                childProcess2.spawn(cmd[0], cmd.slice(1), {
-                  cwd,
-                  shell: !conhost,
-                  stdio: ["pipe", "pipe", "pipe"],
-                  windowsHide: !resizer,
-                }),
-              );
+              env: NodeJS.ProcessEnv = { ...process2.env };
+            const trackerOut = activeFileTracker.outputFilePath;
+            if (trackerOut !== null) {
+              env["OBSIDIAN_ACTIVE_FILE_PATH"] = trackerOut;
+            }
+            const activeAtSpawn = activeFileTracker.currentFilePath;
+            if (activeAtSpawn !== null) {
+              env["OBSIDIAN_ACTIVE_FILE_AT_SPAWN"] = activeAtSpawn;
+            }
+            const ret = await spawnPromise(() =>
+              childProcess2.spawn(cmd[0], cmd.slice(1), {
+                cwd,
+                env,
+                shell: !conhost,
+                stdio: ["pipe", "pipe", "pipe"],
+                windowsHide: !resizer,
+              }),
+            );
             return [
               ret,
               inOutTmp,
@@ -1052,7 +1065,7 @@ class UnixPseudoterminal implements Pseudoterminal {
       pythonExecutable,
     }: ShellPseudoterminalArguments,
   ) {
-    const { language } = context;
+    const { language, activeFileTracker } = context;
     this.shell = spawnPromise(async () => {
       if (isNil(pythonExecutable)) {
         throw new Error(
@@ -1068,6 +1081,14 @@ class UnixPseudoterminal implements Pseudoterminal {
         };
       if (!isNil(terminal)) {
         env["TERM"] = terminal;
+      }
+      const trackerOut = activeFileTracker.outputFilePath;
+      if (trackerOut !== null) {
+        env["OBSIDIAN_ACTIVE_FILE_PATH"] = trackerOut;
+      }
+      const activeAtSpawn = activeFileTracker.currentFilePath;
+      if (activeAtSpawn !== null) {
+        env["OBSIDIAN_ACTIVE_FILE_AT_SPAWN"] = activeAtSpawn;
       }
       return childProcess2.spawn(
         pythonExecutable,
