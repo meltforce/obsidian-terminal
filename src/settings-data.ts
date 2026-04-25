@@ -93,6 +93,9 @@ export interface Settings extends PluginContext.Settings {
   readonly interceptLogging: boolean;
   readonly macOSOptionKeyPassthrough: boolean;
   readonly preferredRenderer: Settings.PreferredRendererOption;
+
+  readonly activeNoteTracking: boolean;
+  readonly activeNoteTrackingPath: string;
 }
 export namespace Settings {
   export type DefaultProfile = keyof Profiles | null;
@@ -140,6 +143,8 @@ export namespace Settings {
     ),
     defaultProfile: null,
     terminalOptions: DEFAULT_TERMINAL_OPTIONS,
+    activeNoteTracking: false,
+    activeNoteTrackingPath: "${tmpdir}/obsidian-active-${vault}",
   });
 
   export const DEFAULTABLE_LANGUAGES = deepFreeze([
@@ -1216,6 +1221,12 @@ export namespace Settings {
       terminalOptions: Settings.Profile.fixTerminalOptions(
         unc["terminalOptions"],
       ).value,
+      activeNoteTracking: fixTyped(DEFAULT, unc, "activeNoteTracking", [
+        "boolean",
+      ]),
+      activeNoteTrackingPath: fixTyped(DEFAULT, unc, "activeNoteTrackingPath", [
+        "string",
+      ]),
     };
     return markFixed(self0, fixed);
   }

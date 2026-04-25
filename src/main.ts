@@ -13,6 +13,7 @@ import {
 } from "@polyipseity/obsidian-plugin-library";
 import { LocalSettings, Settings } from "./settings-data.js";
 import { MAX_HISTORY, PLUGIN_UNLOAD_DELAY } from "./magic.js";
+import { ActiveFileTracker } from "./terminal/active-file-tracker.js";
 import { DeveloperConsolePseudoterminal } from "./terminal/pseudoterminal.js";
 import { PluginLocales } from "../assets/locales.js";
 import { isNil } from "lodash-es";
@@ -31,6 +32,7 @@ export class TerminalPlugin
   public readonly settings: SettingsManager<Settings>;
   public readonly developerConsolePTY =
     new DeveloperConsolePseudoterminal.Manager(this);
+  public readonly activeFileTracker = new ActiveFileTracker(this);
 
   public readonly earlyPatch;
   public readonly statusBarHider = new StatusBarHider(this);
@@ -123,6 +125,9 @@ export class TerminalPlugin
           }),
           Promise.resolve().then(() => {
             loadTerminal(this);
+          }),
+          Promise.resolve().then(() => {
+            this.activeFileTracker.load();
           }),
           Promise.resolve().then(() => {
             this.register(
