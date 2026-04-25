@@ -667,6 +667,75 @@ export class SettingTab extends AdvancedSettingTab<Settings> {
               },
             ),
           );
+      })
+      .newSetting(containerEl, (setting) => {
+        setting
+          .setName(i18n.t("settings.active-note-tracking"))
+          .setDesc(i18n.t("settings.active-note-tracking-description"))
+          .addToggle(
+            linkSetting(
+              () => settings.value.activeNoteTracking,
+              async (value) =>
+                settings.mutate((settingsM) => {
+                  settingsM.activeNoteTracking = value;
+                }),
+              () => {
+                this.postMutate();
+              },
+            ),
+          )
+          .addExtraButton(
+            resetButton(
+              i18n.t("asset:settings.active-note-tracking-icon"),
+              i18n.t("settings.reset"),
+              async () =>
+                settings.mutate((settingsM) => {
+                  settingsM.activeNoteTracking =
+                    Settings.DEFAULT.activeNoteTracking;
+                }),
+              () => {
+                this.postMutate();
+              },
+            ),
+          );
+      })
+      .newSetting(containerEl, (setting) => {
+        setting
+          .setName(i18n.t("settings.active-note-tracking-path"))
+          .setDesc(i18n.t("settings.active-note-tracking-path-description"))
+          .addText(
+            linkSetting(
+              () => settings.value.activeNoteTrackingPath,
+              async (value) =>
+                settings.mutate((settingsM) => {
+                  settingsM.activeNoteTrackingPath = value;
+                }),
+              () => {
+                this.postMutate();
+              },
+              {
+                post(component) {
+                  component.setPlaceholder(
+                    Settings.DEFAULT.activeNoteTrackingPath,
+                  );
+                },
+              },
+            ),
+          )
+          .addExtraButton(
+            resetButton(
+              i18n.t("asset:settings.active-note-tracking-path-icon"),
+              i18n.t("settings.reset"),
+              async () =>
+                settings.mutate((settingsM) => {
+                  settingsM.activeNoteTrackingPath =
+                    Settings.DEFAULT.activeNoteTrackingPath;
+                }),
+              () => {
+                this.postMutate();
+              },
+            ),
+          );
       });
   }
 

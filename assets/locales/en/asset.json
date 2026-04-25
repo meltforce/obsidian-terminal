@@ -120,6 +120,8 @@
     "open-terminal-id": "Open terminal"
   },
   "settings": {
+    "active-note-tracking-icon": "file-text",
+    "active-note-tracking-path-icon": "folder",
     "add-to-command-icon": "$t(asset:generic.terminal-icon)",
     "add-to-context-menu-icon": "menu",
     "create-instance-near-existing-ones-icon": "plus",

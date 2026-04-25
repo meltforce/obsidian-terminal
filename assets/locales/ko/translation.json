@@ -276,6 +276,10 @@
     "open-terminal": "$t(generic.terminal) $t(generic.open)"
   },
   "settings": {
+    "active-note-tracking": "Active note tracking",
+    "active-note-tracking-description": "Mirror the path of the active note to a file on disk and expose it via the OBSIDIAN_ACTIVE_FILE_PATH and OBSIDIAN_ACTIVE_FILE_AT_SPAWN environment variables to spawned shells.",
+    "active-note-tracking-path": "Active note tracking output path",
+    "active-note-tracking-path-description": "Where to write the active note path. Supports ${tmpdir} and ${vault} placeholders.",
     "add-to-command": "$t(generic.command)에 추가",
     "add-to-context-menu": "$t(generic.context-menu)에 추가",
     "advanced": "고급",
