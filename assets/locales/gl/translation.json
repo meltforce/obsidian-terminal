@@ -232,7 +232,7 @@
   "menus": {
     "open-terminal": "$t(generic.open, capitalize) in $t(generic.terminal): $t(generic.profile-types.{{type}}, capitalize)"
   },
-  "name": "Terminal Agent",
+  "name": "Agent Terminal",
   "notices": {
     "Python-status-entry-": "{{name}}: {{version}} (satisfied: {{requirement}})",
     "Python-status-entry-unsatisfied": "{{name}}: {{version}} (unsatisfied: {{requirement}})",

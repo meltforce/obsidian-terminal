@@ -17,7 +17,7 @@ describe("PluginLocales", () => {
     const enRes = PluginLocales.RESOURCES[PluginLocales.DEFAULT_LANGUAGE];
 
     const translation = await enRes[PluginLocales.DEFAULT_NAMESPACE]();
-    expect(translation.name).toBe("Terminal Agent");
+    expect(translation.name).toBe("Agent Terminal");
 
     const asset = await enRes.asset();
     expect(asset.settings.documentations["readme-icon"]).toBe(

@@ -99,10 +99,10 @@
   "name": "obsidian-terminal",
   "obsidian": {
     "authorUrl": "https://github.com/polyipseity",
-    "id": "terminal-agent",
+    "id": "agent-terminal",
     "isDesktopOnly": false,
     "minAppVersion": "1.4.11",
-    "name": "Terminal Agent"
+    "name": "Agent Terminal"
   },
   "overrides": {},
   "packageManager": "bun@1.3.10",
