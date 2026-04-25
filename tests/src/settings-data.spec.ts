@@ -74,6 +74,27 @@ describe("src/settings-data.ts", () => {
     );
   });
 
+  it("activeNoteTracking defaults to disabled with a templated path", () => {
+    expect(Settings.DEFAULT.activeNoteTracking).toBe(false);
+    expect(typeof Settings.DEFAULT.activeNoteTrackingPath).toBe("string");
+    // The default path uses the documented placeholders so users see them.
+    expect(Settings.DEFAULT.activeNoteTrackingPath).toContain("${tmpdir}");
+    expect(Settings.DEFAULT.activeNoteTrackingPath).toContain("${vault}");
+  });
+
+  it("Settings.fix coerces bad active-note-tracking values", () => {
+    const fixed = Settings.fix({
+      activeNoteTracking: "yes",
+      activeNoteTrackingPath: 42,
+    });
+    expect(fixed.value.activeNoteTracking).toBe(
+      Settings.DEFAULT.activeNoteTracking,
+    );
+    expect(fixed.value.activeNoteTrackingPath).toBe(
+      Settings.DEFAULT.activeNoteTrackingPath,
+    );
+  });
+
   it("Settings.fix validates defaultProfile against available profiles", () => {
     const baseProfiles = {
       foo: Settings.Profile.DEFAULTS.external,

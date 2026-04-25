@@ -8,6 +8,25 @@ import type { TerminalPlugin } from "../main.js";
 const WRITE_DEBOUNCE_MS = 100;
 const UNSAFE_FILENAME_CHARS = /[^A-Za-z0-9._-]+/gu;
 
+// Resolve a path template by substituting ${tmpdir} with the current OS
+// temp directory and ${vault} with a sanitized vault name. Returns null
+// for empty/whitespace-only templates so callers can disable tracking
+// without a separate flag.
+export function resolveActiveNoteTrackingPath(
+  template: string,
+  vaultName: string,
+  tmpDir: string,
+): string | null {
+  const trimmed = template.trim();
+  if (!trimmed) {
+    return null;
+  }
+  const sanitizedVault = vaultName.replace(UNSAFE_FILENAME_CHARS, "_");
+  return trimmed
+    .replace(/\$\{tmpdir\}/gu, tmpDir)
+    .replace(/\$\{vault\}/gu, sanitizedVault);
+}
+
 export class ActiveFileTracker {
   #currentFilePath: string | null = null;
   #outputFilePath: string | null = null;
@@ -89,16 +108,11 @@ export class ActiveFileTracker {
   }
 
   #resolveOutputPath(): string | null {
-    const template = this.plugin.settings.value.activeNoteTrackingPath.trim();
-    if (!template) {
-      return null;
-    }
-    const vaultName = this.plugin.app.vault
-      .getName()
-      .replace(UNSAFE_FILENAME_CHARS, "_");
-    return template
-      .replace(/\$\{tmpdir\}/gu, tmpdir())
-      .replace(/\$\{vault\}/gu, vaultName);
+    return resolveActiveNoteTrackingPath(
+      this.plugin.settings.value.activeNoteTrackingPath,
+      this.plugin.app.vault.getName(),
+      tmpdir(),
+    );
   }
 
   #scheduleWrite = debounce(() => {
