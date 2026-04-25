@@ -7,8 +7,8 @@
   },
   "version": "3.23.0",
   "authorUrl": "https://github.com/polyipseity",
-  "id": "terminal",
+  "id": "terminal-agent",
   "isDesktopOnly": false,
   "minAppVersion": "1.4.11",
-  "name": "Terminal"
+  "name": "Terminal Agent"
 }
